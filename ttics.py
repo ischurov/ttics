@@ -8,6 +8,7 @@ from icalendar import Calendar, Event, vText
 
 app = Flask(__name__)
 app.config["APPLICATION_ROOT"] = "/ttics/"
+app.config['SERVER_NAME'] = 'math-info.hse.ru'
 app.debug=True
 
 class MyError(Exception):
@@ -26,7 +27,7 @@ def hello_world():
                                error=str(err))
 
     return render_template("form.html", url=page_url,
-                           dest=url_for("ics", idx=idx))
+                           dest=url_for("ics", idx=idx, _external=True))
 
 @app.route('/<string:idx>/cal.ics')
 def ics(idx):
