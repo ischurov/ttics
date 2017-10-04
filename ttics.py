@@ -37,7 +37,7 @@ def ics(idx):
 
     return response
 
-def page_to_idx(url: str) -> str:
+def page_to_idx(url):
     m = re.match(
         r"http(s?)://(www\.)?hse.ru/(org/persons/\d+|staff/\w+)",
         url)
@@ -56,7 +56,7 @@ def page_to_idx(url: str) -> str:
         ))
     return m.group(1)
 
-def get_timetable(idx: str, fromdate: str, todate: str):
+def get_timetable(idx, fromdate, todate):
     entrypoint = "https://www.hse.ru/api/timetable/lessons"
     return requests.get(entrypoint, params=dict(fromdate=fromdate,
                                                todate=todate,
