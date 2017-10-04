@@ -6,11 +6,9 @@ import re
 import datetime
 from icalendar import Calendar, Event, vText
 
-
 app = Flask(__name__)
 app.config["APPLICATION_ROOT"] = "/ttics/"
 app.debug=True
-
 
 class MyError(Exception):
     pass
@@ -45,13 +43,17 @@ def page_to_idx(url: str) -> str:
         url)
     if not m:
         raise MyError(
-            f"{url} doesn't look like HSE professor personal page")
+            "{url} doesn't look like HSE professor personal page".format(
+                url=url
+            ))
 
     url_tt = m.group(0) + "/timetable"
     page = requests.get(url_tt)
     m = re.search(r"idx.push\('(\d+)'\);", page.text)
     if not m:
-        raise MyError(f"idx not found on page {url_tt}")
+        raise MyError("idx not found on page {url_tt}".format(
+            url_tt=url_tt
+        ))
     return m.group(1)
 
 def get_timetable(idx: str, fromdate: str, todate: str):
