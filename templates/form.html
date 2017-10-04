@@ -21,7 +21,7 @@
         <div class="col-md-8 col-md-offset-2 vertical-align" style="height: 100vh;">
             <div style="text-align: center">
             <form method="POST">
-                <input type="text" size="80" name="url"  placeholder="URL of professor's personal page">
+                <input type="text" size="80" name="url"  placeholder="URL of professor's personal page" value="{{ url | default("") }}">
                 <input type="submit" value="get ics">
             </form>
 
@@ -33,6 +33,12 @@
                    </p>
                </div>
             {% endif %}
+            {% if dest %}
+                <div class="alert alert-success">
+                    <p>
+                        Use this address as .ics file: <a href="{{ dest }}">{{ dest }}</a>
+                    </p>
+                </div>
             </div>
         </div>
     </div>

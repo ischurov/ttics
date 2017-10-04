@@ -22,11 +22,13 @@ def hello_world():
     try:
         idx = page_to_idx(page_url)
     except MyError as err:
-        return render_template("form.html", error=str(err))
+        return render_template("form.html", url=page_url,
+                               error=str(err))
 
-    return redirect(url_for("ics", idx=idx))
+    return render_template("form.html", url=page_url,
+                           dest=url_for("ics", idx=idx))
 
-@app.route('/ics/<string:idx>')
+@app.route('/<string:idx>/cal.ics')
 def ics(idx):
     tt = get_current_timetable(idx)
     cal = tt_to_ical(tt)
