@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>HSE timetable to ics</title>
+</head>
+<body>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+<style>
+    .vertical-align {
+    display: flex;
+    align-items: center;
+}
+</style>
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2 vertical-align" style="height: 100vh;">
+            <div style="text-align: center">
+            <form method="POST">
+                <input type="text" size="80" name="url"  placeholder="URL of professor's personal page">
+                <input type="submit" value="get ics">
+            </form>
+
+            <p style="font-size:80%" class="text-muted">Put professor's personal webpage on hse.ru here to get a link to his or her timetable as .ics file.</p>
+            {% if error %}
+               <div class="alert alert-danger">
+                   <p>
+                       {{ error }}
+                   </p>
+               </div>
+            {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
