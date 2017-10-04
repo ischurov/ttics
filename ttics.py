@@ -80,7 +80,7 @@ def lesson_to_event(lesson):
     date = lesson['date']
     begin = lesson['beginLesson']
     end = lesson['endLesson']
-    fmt = "%Y.%m.%d %H:%S"
+    fmt = "%Y.%m.%d %H:%M"
     begin_dt = datetime.datetime.strptime(date + " " + begin, fmt)
     end_dt = datetime.datetime.strptime(date + " " + end, fmt)
     ev.add("dtstart", begin_dt)
