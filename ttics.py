@@ -81,7 +81,7 @@ def get_timetable(idx, fromdate, todate):
 def dt_to_Ymd(dt):
     return dt.strftime("%Y.%m.%d")
 
-def get_current_timetable(idx, weeks=4):
+def get_current_timetable(idx, weeks=10):
     now = datetime.datetime.now()
     delta = datetime.timedelta(weeks=weeks)
     fromdate = dt_to_Ymd(now - delta)
