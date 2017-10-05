@@ -99,8 +99,8 @@ def lesson_to_event(lesson):
     ev.add("dtstart", begin_dt)
     ev.add("dtend", end_dt)
     ev.add("summary", lesson['discipline'])
-    ev.add("location", vText(lesson['building'] + " " +
-                             lesson.get('auditorium', '')))
+    ev.add("location", vText(", ".join([lesson['building'],
+                             lesson.get('auditorium', '')])))
     return ev
 
 def tt_to_ical(tt):
