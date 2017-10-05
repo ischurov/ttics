@@ -43,6 +43,9 @@
                     <p>
                         Use this address as .ics file: <a href="{{ dest }}">{{ dest }}</a>
                     </p>
+                    <div style="display: block; margin: auto">
+                        {{ qr | safe }}
+                    </div>
                 </div>
             {% endif %}
             </div>

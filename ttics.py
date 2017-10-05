@@ -5,6 +5,9 @@ import requests
 import re
 import datetime
 from icalendar import Calendar, Event, vText
+import qrcode
+import qrcode.image.svg
+from io import BytesIO
 
 app = Flask(__name__)
 app.config["APPLICATION_ROOT"] = "/ttics/"
@@ -26,8 +29,10 @@ def hello_world():
         return render_template("form.html", url=page_url,
                                error=str(err))
 
+    url = url_for("ics", idx=idx, _external=True)
     return render_template("form.html", url=page_url,
-                           dest=url_for("ics", idx=idx, _external=True))
+                           dest=url,
+                           qr=qr(url))
 
 @app.route('/<string:idx>/cal.ics')
 def ics(idx):
@@ -58,6 +63,14 @@ def page_to_idx(url):
             url_tt=url_tt
         ))
     return m.group(1)
+
+def qr(data):
+    factory = qrcode.image.svg.SvgImage
+    img = qrcode.make(data, image_factory=factory)
+    io = BytesIO()
+    img.save(io)
+    return io.getvalue().decode("utf-8")
+
 
 def get_timetable(idx, fromdate, todate):
     entrypoint = "https://www.hse.ru/api/timetable/lessons"
