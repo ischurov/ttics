@@ -24,20 +24,20 @@ def hello_world():
                                rootdir=app.config["APPLICATION_ROOT"])
     page_url = request.form.get('url')
     try:
-        idx = page_to_idx(page_url)
+        idxes = page_to_idxes(page_url)
     except MyError as err:
         return render_template("form.html", url=page_url,
                                error=str(err))
 
-    url = url_for("ics", idx=idx, _external=True)
+    url = url_for("ics", idx="_".join(idxes), _external=True)
     return render_template("form.html", url=page_url,
                            dest=url,
                            qr=qr(url))
 
-@app.route('/<string:idx>/cal.ics')
-def ics(idx):
-    tt = get_current_timetable(idx)
-    cal = tt_to_ical(tt)
+@app.route('/<string:idxes>/cal.ics')
+def ics(idxes):
+    tts = get_current_timetable(idxes)
+    cal = tt_to_ical(tts)
     response = make_response(cal.to_ical().decode('utf-8'))
     response.headers["Content-Disposition"] = ("attachment; "
                                                "filename=calendar.ics")
@@ -45,7 +45,7 @@ def ics(idx):
 
     return response
 
-def page_to_idx(url):
+def page_to_idxes(url):
     m = re.match(
         r"http(s?)://(www\.)?hse.ru/(org/persons/\d+|staff/\w+)",
         url)
@@ -57,12 +57,13 @@ def page_to_idx(url):
 
     url_tt = m.group(0) + "/timetable"
     page = requests.get(url_tt)
-    m = re.search(r"idx.push\('(\d+)'\);", page.text)
-    if not m:
+    out = [m.group(1)
+            for m in re.finditer(r"idx.push\('(\d+)'\);", page.text)]
+    if not out:
         raise MyError("idx not found on page {url_tt}".format(
             url_tt=url_tt
         ))
-    return m.group(1)
+    return out
 
 def qr(data):
     factory = qrcode.image.svg.SvgImage
@@ -72,21 +73,25 @@ def qr(data):
     return io.getvalue().decode("utf-8")
 
 
-def get_timetable(idx, fromdate, todate):
+def get_timetable(idxes, fromdate, todate):
     entrypoint = "https://www.hse.ru/api/timetable/lessons"
-    return requests.get(entrypoint, params=dict(fromdate=fromdate,
+    out = []
+    for idx in idxes.split("_"):
+        out.append(requests.get(entrypoint, params=dict(fromdate=fromdate,
                                                todate=todate,
                                                lectureroid=idx,
-                                               receiverType='1')).json()
+                                               receiverType='1')).json())
+    return out
+
 def dt_to_Ymd(dt):
     return dt.strftime("%Y.%m.%d")
 
-def get_current_timetable(idx, weeks=10):
+def get_current_timetable(idxes, weeks=10):
     now = datetime.datetime.now()
     delta = datetime.timedelta(weeks=weeks)
     fromdate = dt_to_Ymd(now - delta)
     todate = dt_to_Ymd(now + delta)
-    return get_timetable(idx, fromdate, todate)
+    return get_timetable(idxes, fromdate, todate)
 
 def lesson_to_event(lesson):
     ev = Event()
@@ -103,10 +108,11 @@ def lesson_to_event(lesson):
                              lesson.get('auditorium', '')])))
     return ev
 
-def tt_to_ical(tt):
+def tt_to_ical(tts):
     cal = Calendar()
-    for lesson in tt['Lessons']:
-        cal.add_component(lesson_to_event(lesson))
+    for tt in tts:
+        for lesson in tt['Lessons']:
+            cal.add_component(lesson_to_event(lesson))
     return cal
 
 if __name__ == '__main__':
