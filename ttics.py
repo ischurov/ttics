@@ -29,7 +29,7 @@ def hello_world():
         return render_template("form.html", url=page_url,
                                error=str(err))
 
-    url = url_for("ics", idx="_".join(idxes), _external=True)
+    url = url_for("ics", idxes="_".join(idxes), _external=True)
     return render_template("form.html", url=page_url,
                            dest=url,
                            qr=qr(url))
